@@ -1,0 +1,42 @@
+TYPEMAP
+struct perl_nfct_handle*    perl_nfct_handle
+struct nf_conntrack*        nf_conntrack
+uint8_t                     T_UV
+uint16_t                    T_UV
+uint32_t                    T_UV
+uint64_t                    T_UV
+enum nf_conntrack_attr      T_UV
+enum nf_conntrack_msg_type  T_UV
+enum nf_conntrack_query     T_UV
+
+INPUT
+perl_nfct_handle
+	if(sv_isobject($arg)
+		&& sv_derived_from($arg, \"Linux::Netfilter::Conntrack::Handle\")
+		&& SvTYPE(SvRV($arg)) == SVt_PVMG)
+	{
+		$var = ($type)SvIV((SV*)SvRV( $arg ));
+	}
+	else{
+		croak(\"${Package}::$func_name() -- $var is not a Linux::Netfilter::Conntrack::Handle\");
+	}
+
+OUTPUT
+perl_nfct_handle
+	sv_setref_pv( $arg, "Linux::Netfilter::Conntrack::Handle", (void*)$var );
+
+INPUT
+nf_conntrack
+	if(sv_isobject($arg)
+		&& sv_derived_from($arg, \"Linux::Netfilter::Conntrack::Connection\")
+		&& SvTYPE(SvRV($arg)) == SVt_PVMG)
+	{
+		$var = ($type)SvIV((SV*)SvRV( $arg ));
+	}
+	else{
+		croak(\"${Package}::$func_name() -- $var is not a Linux::Netfilter::Conntrack::Connection\");
+	}
+
+OUTPUT
+nf_conntrack
+	sv_setref_pv( $arg, "Linux::Netfilter::Conntrack::Connection", (void*)$var );

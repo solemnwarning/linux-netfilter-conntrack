@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Linux::Netfilter::Conntrack qw(:constants);
+
+my $cth = Linux::Netfilter::Conntrack::Handle->new(NFNL_SUBSYS_CTNETLINK, NFCT_ALL_CT_GROUPS);
+
+$cth->ct_callback_register(NFCT_T_ALL, sub
+{
+	my ($type, $conn) = @_;
+
+	print $conn->snprintf($type, NFCT_O_DEFAULT, 0), "\n";
+
+	return NFCT_CB_CONTINUE;
+});
+
+$cth->catch();

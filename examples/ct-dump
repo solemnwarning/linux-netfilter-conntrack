@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Linux::Netfilter::Conntrack qw(:constants);
+use Socket qw(AF_INET);
+
+my $cth = Linux::Netfilter::Conntrack::Handle->new(NFNL_SUBSYS_CTNETLINK, 0);
+
+$cth->ct_callback_register(NFCT_T_ALL, sub
+{
+	my ($type, $conn) = @_;
+
+	print "$conn\n";
+
+	return NFCT_CB_CONTINUE;
+});
+
+$cth->query(NFCT_Q_DUMP, AF_INET);

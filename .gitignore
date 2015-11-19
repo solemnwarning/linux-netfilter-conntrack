@@ -1,0 +1,10 @@
+_build
+blib
+Build
+MYMETA.json
+MYMETA.yml
+
+lib/Linux/Netfilter/Conntrack/*.c
+lib/Linux/Netfilter/Conntrack/*.o
+lib/Linux/Netfilter/Conntrack/Connection.xs
+lib/Linux/Netfilter/Conntrack/Constants.pm
