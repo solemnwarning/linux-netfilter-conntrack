@@ -280,52 +280,6 @@ describe "Linux::Netfilter::Conntrack::Connection" => sub
 
 		is($ctc->get_orig_l4proto(), IPPROTO_ICMP);
 	};
-
-	it "can be exported" => sub
-	{
-		my $ct = Linux::Netfilter::Conntrack::Connection->new();
-
-		# Test we can export one of each type of field.
-		$ct->set_orig_ipv4_src("192.168.0.1");
-		$ct->set_orig_ipv6_dst("2001::1");
-		$ct->set_orig_port_src(1234);
-		$ct->set_icmp_type(8);
-		$ct->set_timeout(5678);
-		$ct->set_orig_counter_packets(4);
-
-		my $got = $ct->export();
-
-		cmp_deeply($got, {
-			orig_ipv4_src        => "192.168.0.1",
-			orig_ipv6_dst        => "2001::1",
-			orig_port_src        => 1234,
-			icmp_type            => 8,
-			timeout              => 5678,
-			orig_counter_packets => 4,
-		});
-	};
-
-	it "can be re-constructed from an export" => sub
-	{
-		# Test we can import one of each type of field.
-		my $data = {
-			orig_ipv4_src        => "192.168.0.1",
-			orig_ipv6_dst        => "2001::1",
-			orig_port_src        => 1234,
-			icmp_type            => 8,
-			timeout              => 5678,
-			orig_counter_packets => 4,
-		};
-
-		my $ct = Linux::Netfilter::Conntrack::Connection->new_from_export($data);
-
-		is($ct->get_orig_ipv4_src(),        "192.168.0.1");
-		is($ct->get_orig_ipv6_dst(),        "2001::1");
-		is($ct->get_orig_port_src(),        1234);
-		is($ct->get_icmp_type(),            8);
-		is($ct->get_timeout(),              5678);
-		is($ct->get_orig_counter_packets(), 4);
-	};
 };
 
 runtests unless caller;

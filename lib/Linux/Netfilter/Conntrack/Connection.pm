@@ -32,76 +32,6 @@ use overload
 			Linux::Netfilter::Conntrack::NFCT_OF_SHOW_LAYER3());
 	};
 
-# List of attributes to copy when exporting/importing. It is assumed a get_XXX
-# and set_XXX method exists for each which behaves in the usual way.
-my @EXPORT_ATTRS = (
-	"orig_ipv4_src",
-	"orig_ipv4_dst",
-	"repl_ipv4_src",
-	"repl_ipv4_dst",
-	"orig_ipv6_src",
-	"orig_ipv6_dst",
-	"repl_ipv6_src",
-	"repl_ipv6_dst",
-	"orig_port_src",
-	"orig_port_dst",
-	"repl_port_src",
-	"repl_port_dst",
-	"icmp_type",
-	"icmp_code",
-	"icmp_id",
-	"orig_l3proto",
-	"repl_l3proto",
-	"orig_l4proto",
-	"repl_l4proto",
-	"tcp_state",
-	"snat_ipv4",
-	"dnat_ipv4",
-	"snat_port",
-	"dnat_port",
-	"timeout",
-	"mark",
-	"orig_counter_packets",
-	"repl_counter_packets",
-	"orig_counter_bytes",
-	"repl_counter_bytes",
-	"use",
-	"id",
-	"status",
-	"tcp_flags_orig",
-	"tcp_flags_repl",
-	"tcp_mask_orig",
-	"tcp_mask_repl",
-	"master_ipv4_src",
-	"master_ipv4_dst",
-	"master_ipv6_src",
-	"master_ipv6_dst",
-	"master_port_src",
-	"master_port_dst",
-	"master_l3proto",
-	"master_l4proto",
-	# "secmark",
-	# "orig_nat_seq_correction_pos",
-	# "orig_nat_seq_offset_before",
-	# "orig_nat_seq_offset_after",
-	# "repl_nat_seq_correction_pos",
-	# "repl_nat_seq_offset_before",
-	# "repl_nat_seq_offset_after",
-	"sctp_state",
-	# "sctp_vtag_orig",
-	# "sctp_vtag_repl",
-	"helper_name",
-	"dccp_state",
-	"dccp_role",
-	# "dccp_handshake_seq",
-	"tcp_wscale_orig",
-	"tcp_wscale_repl",
-	"zone",
-	# "secctx",
-	"timestamp_start",
-	"timestamp_stop",
-);
-
 =head1 CLASS METHODS
 
 =head2 new()
@@ -109,37 +39,6 @@ my @EXPORT_ATTRS = (
 Create a new nf_conntrack structure.
 
 Returns a C<Linux::Netfilter::Conntrack::Connection> object.
-
-=head2 new_from_export($data)
-
-Construct a new C<nf_conntrack> structure from one previously exported using
-the C<export()> method.
-
-Returns a C<Linux::Netfilter::Conntrack::Connection> object.
-
-=cut
-
-sub new_from_export
-{
-	my ($class, $data) = @_;
-
-	my $self = $class->new();
-
-	foreach my $attr(@EXPORT_ATTRS)
-	{
-		if(defined($data->{$attr}))
-		{
-			my $set = "set_$attr";
-			$self->$set($data->{$attr});
-		}
-		else{
-			my $unset = "unset_$attr";
-			$self->$unset();
-		}
-	}
-
-	return $self;
-}
 
 =head1 INSTANCE METHODS
 
@@ -307,31 +206,6 @@ The output flags are:
   
   NFCT_OF_TIME
       display time.
-
-=head2 export()
-
-Dump the C<nf_conntrack> data structure to an unblessed Perl data structure
-suitable for passing through JSON or similar and reconstructing on the other
-end.
-
-=cut
-
-sub export
-{
-	my ($self) = @_;
-
-	my $data = {
-		map {
-			my $method = "get_$_";
-			($_ => $self->$method());
-		} @EXPORT_ATTRS
-	};
-
-	delete $data->{$_}
-		foreach(grep { !defined $data->{$_} } keys(%$data));
-
-	return $data;
-}
 
 =head1 BUGS
 
